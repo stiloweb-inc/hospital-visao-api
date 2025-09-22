@@ -15,12 +15,43 @@ model Location {
   city    String?
   state   String?
   cep     String?
-  lat     String?
-  long    String?
+  lat     Decimal?
+  long    Decimal?
+
+  // Relations
+  appointments   Appointment[]
+  availableSlots AvailableSlot[]
 
   createdAt DateTime @default(now())
 
   @@map("locations")
+}
+
+model HealthInsurance {
+  id String @id @default(nanoid())
+
+  name  String
+  color String?
+
+  // Relations
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+
+  @@map("health_insurances")
+}
+
+model Plan {
+  id String @id @default(nanoid())
+
+  name String
+
+  // Relations
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+
+  @@map("plans")
 }
 
 model Specialty {
@@ -28,7 +59,152 @@ model Specialty {
 
   name String
 
+  // Relations
+  professionals        ProfessionalSpecialty[]
+  appointments         Appointment[]
+
   createdAt DateTime @default(now())
 
-  @@map("specialities")
+  @@map("specialties")
+}
+
+model Service {
+  id String @id @default(nanoid())
+
+  name        String
+  price       Decimal?
+  duration    Int? // em minutos
+  description String?
+  preparation String?
+
+  // Relations
+  appointments   Appointment[]
+  availableSlots AvailableSlot[]
+
+  createdAt DateTime @default(now())
+
+  @@map("services")
+}
+
+model Professional {
+  id String @id @default(nanoid())
+
+  name        String
+  description String?
+  image       String? // URL
+  expertise   String?
+  register    String?
+
+  // Relations
+  specialties    ProfessionalSpecialty[]
+  appointments   Appointment[]
+  availableSlots AvailableSlot[]
+
+  createdAt DateTime @default(now())
+
+  @@map("professionals")
+}
+
+model ProfessionalSpecialty {
+  professionalId String
+  specialtyId    String
+
+  professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  specialty    Specialty    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@id([professionalId, specialtyId])
+  @@map("professional_specialties")
+}
+
+model Client {
+  id String @id @default(nanoid())
+
+  name        String
+  description String?
+  cpf         String?
+  image       String? // URL
+  email       String?
+  birthday    DateTime? // formato: YYYY-MM-DD
+  externalId  String?
+
+  // Relations
+  phones       ClientPhone[]
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+
+  @@map("clients")
+}
+
+model ClientPhone {
+  clientId String
+  phone    String // formato internacional: 5511999999999
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@id([clientId, phone])
+  @@map("client_phones")
+}
+
+model Appointment {
+  id String @id @default(nanoid())
+
+  date           DateTime // formato: YYYY-MM-DD
+  hour           DateTime // formato: HH:mm
+  endHour        DateTime?
+  state          AppointmentState // WAITING, CONFIRMED, REJECTED, SHOW, NO_SHOW
+  classification String?
+
+  // Foreign Keys
+  clientId          String?
+  locationId        String?
+  specialtyId       String?
+  healthInsuranceId String?
+  professionalId    String?
+  serviceId         String?
+  planId            String?
+
+  // Relations
+  client          Client?          @relation(fields: [clientId], references: [id])
+  location        Location?        @relation(fields: [locationId], references: [id])
+  specialty       Specialty?       @relation(fields: [specialtyId], references: [id])
+  healthInsurance HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  professional    Professional?    @relation(fields: [professionalId], references: [id])
+  service         Service?         @relation(fields: [serviceId], references: [id])
+  plan            Plan?            @relation(fields: [planId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("appointments")
+}
+
+model AvailableSlot {
+  id String @id @default(nanoid())
+
+  date        DateTime
+  startTime   DateTime
+  endTime     DateTime
+  isAvailable Boolean @default(true)
+
+  // Foreign Keys
+  professionalId String?
+  serviceId      String?
+  locationId     String?
+
+  // Relations
+  professional Professional? @relation(fields: [professionalId], references: [id])
+  service      Service?      @relation(fields: [serviceId], references: [id])
+  location     Location?     @relation(fields: [locationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("available_slots")
+}
+
+enum AppointmentState {
+  WAITING
+  CONFIRMED
+  REJECTED
+  SHOW
+  NO_SHOW
 }

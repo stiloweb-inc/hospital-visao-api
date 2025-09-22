@@ -106,16 +106,103 @@ CLAUDE.md                 # This file - guidance for Claude Code
 
 ## Database Schema
 
-Current models:
-- **Location**: Hospital/clinic locations with address and geo data
-- **Specialty**: Medical specialties
+Complete healthcare management system following Clinia API specifications:
 
-Database uses nanoid() for primary keys and PostgreSQL as the provider.
+### Core Models
+- **Location**: Hospital/clinic locations with address and geo data
+- **HealthInsurance**: Health insurance providers (convênios)
+- **Plan**: Specific health insurance plans
+- **Specialty**: Medical specialties
+- **Service**: Consultations, exams, and procedures
+- **Professional**: Doctors and healthcare professionals
+- **Client**: Patients with contact information
+- **Appointment**: Scheduled appointments with all relationships
+- **AvailableSlot**: Available time slots for scheduling
+
+### Relationships
+- **Professional ↔ Specialty**: Many-to-many via `ProfessionalSpecialty`
+- **Client ↔ Phone**: One-to-many via `ClientPhone`
+- **All entities** connect to `Appointment` for complete scheduling context
+
+### Key Features
+- **nanoid()** for primary keys across all models
+- **Decimal** type for coordinates and prices
+- **DateTime** for proper date/time handling
+- **Enum** for appointment states (WAITING, CONFIRMED, REJECTED, SHOW, NO_SHOW)
+- **Cascade deletion** for junction tables
 
 ### Seed Data
-The seed file (`prisma/seed.ts`) creates:
-- **1 Location**: "Hospital da Visão - Unidade Principal" in São Paulo/SP
-- **2 Specialties**: "Oftalmologia" and "Cirurgia Refrativa"
+The seed file (`prisma/seed.ts`) creates a complete test dataset:
+- **1 Location**: "Hospital da Visão - Unidade Principal" in Goiânia/GO
+- **2 Health Insurances**: Unimed and Particular
+- **2 Plans**: Unimed Individual and Particular
+- **3 Specialties**: Oftalmologia, Cirurgia Refrativa, Retina e Vítreo
+- **2 Services**: Consulta Oftalmológica and Cirurgia de Catarata
+- **2 Professionals**: Dr. Carlos Silva and Dra. Ana Santos
+- **1 Client**: João Silva with phone number
+- **Professional-Specialty relationships** and **Available slots**
+
+## API Endpoints
+
+Complete REST API following Clinia specifications with all required endpoints:
+
+### Locations (/locations)
+- `GET /locations` - List all locations with optional filters
+  - Query params: `service`, `professional`, `specialty`, `client`
+- `GET /locations/:id` - Get specific location by ID
+
+### Health Insurances (/health-insurances)
+- `GET /health-insurances` - List all health insurances with optional filters
+  - Query params: `service`, `location`, `professional`
+- `GET /health-insurances/:id` - Get specific health insurance by ID
+
+### Plans (/plans)
+- `GET /plans` - List all plans with optional filters
+  - Query params: `healthInsurance`, `location`, `professional`
+
+### Specialties (/specialties)
+- `GET /specialties` - List all specialties with optional filters
+  - Query params: `healthInsurance`, `location`, `plan`, `professional`
+- `GET /specialties/:id` - Get specific specialty by ID
+
+### Services (/services)
+- `GET /services` - List all services with optional filters
+  - Query params: `location`, `professional`, `healthInsurance`, `specialty`, `plan`, `client`, `enabled`
+- `GET /services/:id` - Get specific service by ID
+
+### Professionals (/professionals)
+- `GET /professionals` - List all professionals with optional filters
+  - Query params: `location`, `service`, `healthInsurance`, `specialty`, `enabled`
+- `GET /professionals/:id` - Get specific professional by ID
+
+### Clients (/clients)
+- `GET /clients` - List all clients with pagination
+  - Query params: `limit`, `offset`
+- `GET /clients/search` - Search clients by term
+  - Query params: `term`, `limit`, `offset`
+- `GET /clients/:id` - Get specific client by ID
+- `POST /clients` - Create new client
+- `PATCH /clients/:id` - Update client
+
+### Schedule (/schedule)
+- `GET /schedule` - Get available time slots
+  - Query params: `start`, `end`, `professional`, `service`, `location`, `healthInsurance`, `specialty`, `client`, `plan`
+
+### Appointments (/appointments)
+- `GET /appointments` - List all appointments with optional filters
+  - Query params: `start`, `end`, `location`, `service`, `professional`, `client`, `state`, `minimal`
+- `GET /appointments/:id` - Get specific appointment by ID
+- `POST /appointments` - Create new appointment
+- `PATCH /appointments/:id/state` - Update appointment state
+- `PATCH /appointments/:id/time` - Update appointment date/time
+
+### Features
+- **Advanced filtering** on all list endpoints
+- **Pagination support** where applicable
+- **Full relationships** included in responses
+- **Type validation** using Elysia's built-in validation
+- **Error handling** with proper HTTP status codes
+- **Minimal mode** for performance on large datasets
 
 ## Key Dependencies
 

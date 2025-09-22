@@ -1,21 +1,20 @@
 import { Elysia } from "elysia";
 import { prisma } from "../../lib/prisma";
 
-export const getSpecialities = new Elysia().get("/specialties", async ({ query }) => {
-	const { healthInsurance, location, plan, professional } = query as {
-		healthInsurance?: string;
+export const getHealthInsurances = new Elysia().get("/health-insurances", async ({ query }) => {
+	const { service, location, professional } = query as {
+		service?: string;
 		location?: string;
-		plan?: string;
 		professional?: string;
 	};
 
 	const where: any = {};
 
-	// Filter by health insurance
-	if (healthInsurance) {
+	// Filter by service
+	if (service) {
 		where.appointments = {
 			some: {
-				healthInsuranceId: healthInsurance,
+				serviceId: service,
 			},
 		};
 	}
@@ -29,30 +28,20 @@ export const getSpecialities = new Elysia().get("/specialties", async ({ query }
 		};
 	}
 
-	// Filter by plan
-	if (plan) {
-		where.appointments = {
-			some: {
-				planId: plan,
-			},
-		};
-	}
-
 	// Filter by professional
 	if (professional) {
-		where.professionals = {
+		where.appointments = {
 			some: {
 				professionalId: professional,
 			},
 		};
 	}
 
-	return await prisma.specialty.findMany({
+	return await prisma.healthInsurance.findMany({
 		where,
 		include: {
 			_count: {
 				select: {
-					professionals: true,
 					appointments: true,
 				},
 			},
