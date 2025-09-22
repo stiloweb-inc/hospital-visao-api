@@ -1,0 +1,18 @@
+{
+  "name": "hospital-visao-api",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "elysia": "latest",
+    "prisma": "^6.16.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
