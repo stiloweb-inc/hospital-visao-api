@@ -39,6 +39,9 @@ bunx prisma db push     # Push schema changes to database
 bunx prisma db pull     # Pull schema from database
 bunx prisma migrate dev # Create and apply migration
 bunx prisma studio     # Open Prisma Studio
+bun run db:seed        # Run database seed
+bun run db:reset       # Reset database and seed
+bunx prisma db seed    # Run seed using Prisma (alternative)
 ```
 
 ### Code Quality
@@ -89,6 +92,7 @@ src/
   index.ts                 # Main application entry point (Elysia server)
 prisma/
   schema.prisma           # Database schema definition
+  seed.ts                 # Database seed file
   migrations/             # Database migration files
 package.json              # Project configuration and dependencies
 tsconfig.json             # TypeScript configuration
@@ -107,6 +111,11 @@ Current models:
 - **Specialty**: Medical specialties
 
 Database uses nanoid() for primary keys and PostgreSQL as the provider.
+
+### Seed Data
+The seed file (`prisma/seed.ts`) creates:
+- **1 Location**: "Hospital da Visão - Unidade Principal" in São Paulo/SP
+- **2 Specialties**: "Oftalmologia" and "Cirurgia Refrativa"
 
 ## Key Dependencies
 

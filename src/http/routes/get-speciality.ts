@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { prisma } from "../../lib/prisma";
 
 export const getSpeciality = new Elysia().get(
-	"/specialities/:id",
+	"/specialties/:id",
 	async ({ params }) => {
 		const { id } = params;
 
