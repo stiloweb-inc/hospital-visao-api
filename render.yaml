@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: hospital-visao-api
+    runtime: docker
+    repo: https://github.com/stiloweb-inc/hospital-visao-api.git
+    region: oregon
+    plan: starter
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    numInstances: 1
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hospital-visao-db
+          property: connectionString
+    autoDeploy: true
+
+databases:
+  - name: hospital-visao-db
+    databaseName: hospital_visao
+    user: hospital_user
+    region: oregon
+    plan: starter
+    postgresMajorVersion: 15
