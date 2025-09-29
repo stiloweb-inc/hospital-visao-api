@@ -35,7 +35,12 @@ async function main() {
 		},
 	});
 
-	console.log("💳 Created health insurances:", healthInsurance1.name, "and", healthInsurance2.name);
+	console.log(
+		"💳 Created health insurances:",
+		healthInsurance1.name,
+		"and",
+		healthInsurance2.name,
+	);
 
 	// Create plans
 	const plan1 = await prisma.plan.create({
@@ -71,13 +76,19 @@ async function main() {
 		},
 	});
 
-	console.log("🏥 Created specialties:", specialty1.name, specialty2.name, "and", specialty3.name);
+	console.log(
+		"🏥 Created specialties:",
+		specialty1.name,
+		specialty2.name,
+		"and",
+		specialty3.name,
+	);
 
 	// Create services
 	const service1 = await prisma.service.create({
 		data: {
 			name: "Consulta Oftalmológica",
-			price: 150.00,
+			price: 150.0,
 			duration: 30,
 			description: "Consulta completa com oftalmologista",
 			preparation: "Trazer óculos ou lentes de contato em uso",
@@ -87,7 +98,7 @@ async function main() {
 	const service2 = await prisma.service.create({
 		data: {
 			name: "Cirurgia de Catarata",
-			price: 2500.00,
+			price: 2500.0,
 			duration: 90,
 			description: "Cirurgia de catarata com implante de lente intraocular",
 			preparation: "Jejum de 8 horas. Trazer acompanhante.",
@@ -115,7 +126,12 @@ async function main() {
 		},
 	});
 
-	console.log("👨‍⚕️ Created professionals:", professional1.name, "and", professional2.name);
+	console.log(
+		"👨‍⚕️ Created professionals:",
+		professional1.name,
+		"and",
+		professional2.name,
+	);
 
 	// Create professional-specialty relationships
 	await prisma.professionalSpecialty.create({
