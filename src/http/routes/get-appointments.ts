@@ -99,20 +99,10 @@ export const getAppointments = new Elysia().get(
 		});
 
 		// Format date and hour
-		return appointments.map((appointment) => {
-			const formatted: any = {
-				...appointment,
-				date: appointment.date.toISOString().split("T")[0],
-				hour: `${String(appointment.hour.getHours()).padStart(2, "0")}:${String(appointment.hour.getMinutes()).padStart(2, "0")}`,
-			};
-
-			// Keep only the first phone if client is included
-			if (formatted.client?.phones) {
-				formatted.client.phone = formatted.client.phones[0] || null;
-				delete formatted.client.phones;
-			}
-
-			return formatted;
-		});
+		return appointments.map((appointment) => ({
+			...appointment,
+			date: appointment.date.toISOString().split("T")[0],
+			hour: `${String(appointment.hour.getHours()).padStart(2, "0")}:${String(appointment.hour.getMinutes()).padStart(2, "0")}`,
+		}));
 	},
 );
