@@ -35,6 +35,14 @@ export const getAppointment = new Elysia().get(
 			return { error: "Appointment not found", status: 404 };
 		}
 
-		return appointment;
+		const startDate = new Date(appointment.date);
+		const date = startDate.toISOString().split("T")[0];
+		const hour = startDate.toTimeString().slice(0, 5);
+
+		return {
+			...appointment,
+			date,
+			hour,
+		};
 	},
 );
